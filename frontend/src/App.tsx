@@ -4,12 +4,17 @@ import "./App.css";
 import logo from "./logo.svg";
 import { isSessionValid, setSession, clearSession, getAuthHeaders } from "./session";
 
+interface Item {
+  name: string;
+  value: number;
+}
+
 export interface AppState {
   email: string;
   password: string;
   isRequesting: boolean;
   isLoggedIn: boolean;
-  data: AppNS.Item[];
+  data: Item[];
   error: string;
 }
 
@@ -40,7 +45,7 @@ class App extends React.Component<{}, AppState> {
             <div>
               Server test data:
               <ul>
-                {this.state.data.map((item: AppNS.Item, index) => (
+                {this.state.data.map((item: Item, index) => (
                   <li key={index}>
                     name: {item.name} / value: {item.value}
                   </li>
@@ -102,7 +107,7 @@ class App extends React.Component<{}, AppState> {
   private getTestData = async (): Promise<void> => {
     try {
       this.setState({ error: "" });
-      const response = await axios.get<AppNS.Item[]>("/api/items", { headers: getAuthHeaders() });
+      const response = await axios.get<Item[]>("/api/items", { headers: getAuthHeaders() });
       this.setState({ data: response.data });
     } catch (error) {
       this.setState({ error: "Something went wrong" });
