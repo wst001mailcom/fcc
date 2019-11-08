@@ -2,17 +2,17 @@ import { Document, model, Schema } from "mongoose";
 import { SchemaDef } from "../../types";
 
 // Declare model interface
-interface ItemDoc extends App.Item, Document {}
+interface ItemDoc extends AppNS.Item, Document {}
 
-const itemSchemaDef: SchemaDef<App.Item> = {
+const itemSchemaDef: SchemaDef<AppNS.Item> = {
   name: {
     type: String,
-    required: true
+    required: true,
   },
   value: {
     type: Number,
-    required: true
-  }
+    required: true,
+  },
 };
 
 // Define model schema

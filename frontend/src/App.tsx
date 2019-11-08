@@ -9,7 +9,7 @@ export interface AppState {
   password: string;
   isRequesting: boolean;
   isLoggedIn: boolean;
-  data: App.Item[];
+  data: AppNS.Item[];
   error: string;
 }
 
@@ -40,7 +40,7 @@ class App extends React.Component<{}, AppState> {
             <div>
               Server test data:
               <ul>
-                {this.state.data.map((item: App.Item, index) => (
+                {this.state.data.map((item: AppNS.Item, index) => (
                   <li key={index}>
                     name: {item.name} / value: {item.value}
                   </li>
@@ -102,7 +102,7 @@ class App extends React.Component<{}, AppState> {
   private getTestData = async (): Promise<void> => {
     try {
       this.setState({ error: "" });
-      const response = await axios.get<App.Item[]>("/api/items", { headers: getAuthHeaders() });
+      const response = await axios.get<AppNS.Item[]>("/api/items", { headers: getAuthHeaders() });
       this.setState({ data: response.data });
     } catch (error) {
       this.setState({ error: "Something went wrong" });
