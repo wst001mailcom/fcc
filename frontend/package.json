@@ -4,8 +4,7 @@
   "private": true,
   "proxy": "http://localhost:9000",
   "engines": {
-    "node": "8.* || >= 10.*",
-    "yarn": ">=1.*"
+    "node": "8.* || >= 10.*"
   },
   "jest": {
     "collectCoverageFrom": [
@@ -32,7 +31,7 @@
     "react-scripts": "^3.0.1"
   },
   "devDependencies": {
-    "@types/app-shared-types": "link:../types",
+    "@types/app-shared-types": "../types",
     "@types/enzyme": "^3.1.17",
     "@types/enzyme-adapter-react-16": "^1.0.4",
     "@types/jest": "^24.0.11",
@@ -49,7 +48,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "postinstall": "yarn build",
+    "postinstall": "npm run build",
     "lint": "tslint -c ../tslint.json -p ./tsconfig.json",
     "test": "react-scripts test --coverage --watchAll=false",
     "test:watch": "react-scripts test --coverage --watchAll"
