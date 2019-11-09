@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-// const NodemonPlugin = require("nodemon-webpack-plugin");
+const NodemonPlugin = require("nodemon-webpack-plugin");
 
 const nodeModules = {};
 fs.readdirSync("node_modules")
@@ -30,5 +30,5 @@ module.exports = {
   },
   target: "node",
   externals: nodeModules,
-  //plugins: [new NodemonPlugin()],
+  plugins: [new NodemonPlugin()],
 };
