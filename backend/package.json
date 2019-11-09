@@ -64,7 +64,7 @@
     "webpack": "^3.9.1"
   },
   "scripts": {
-    "heroku-postbuild": "webpack -p", // runs after installation
+    "heroku-postbuild": "webpack -p",
     "start": "webpack --watch",
     "build": "webpack --config webpack.config.js",
     "lint": "tslint -c ../tslint.json -p ./tsconfig.json",
