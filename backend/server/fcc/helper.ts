@@ -28,7 +28,7 @@ export default class Helper {
         "Upgrade-Insecure-Requests": "1",
       },
       // encoding: null,
-      // proxy: 'http://191.96.42.182:3121'
+      proxy: "http://191.96.42.182:3121",
     };
 
     const writable = fs.createWriteStream(downloadFile, { flags: "w+" });
