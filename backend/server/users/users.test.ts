@@ -1,12 +1,11 @@
 import * as _ from "lodash";
 import MongodbMemoryServer from "mongodb-memory-server";
-import * as mongoose from "mongoose";
-import * as request from "supertest";
+import mongoose from "mongoose";
+import request from "supertest";
 import app from "../app";
 import User from "./user.model";
 
 describe("/api/users tests", () => {
-
   const mongod = new MongodbMemoryServer();
   const registerNewUser = (): request.Test => {
     return request(app)
@@ -67,5 +66,4 @@ describe("/api/users tests", () => {
     expect(response.status).toBe(200);
     expect(response.body.email).toBe("new@user.com");
   });
-
 });

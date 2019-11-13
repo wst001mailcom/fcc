@@ -1,4 +1,4 @@
-import * as mongoose from "mongoose";
+import mongoose from "mongoose";
 import populateDatabase from "../scripts/populateDatabase";
 import app from "./app";
 

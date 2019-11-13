@@ -1,26 +1,28 @@
-import * as bodyParser from "body-parser";
+import bodyParser from "body-parser";
 import { Router } from "express";
-import * as mongoose from "mongoose";
-import * as passport from "passport";
+import mongoose from "mongoose";
+import passport from "passport";
 import { Strategy } from "passport-local";
 import { authorize } from "../config";
 import User from "./user.model";
 
-passport.use(new Strategy({ usernameField: "email" }, async (username, password, done) => {
-  try {
-    // Tries to find the user matching the given username
-    const user = await User.findOne({ email: username });
-    // Check if the password is valid
-    if (user && user.isPasswordValid(password)) {
-      return done(null, user);
-    } else {
-      // Throws an error if credentials are not valid
-      throw new Error("Invalid credentials");
+passport.use(
+  new Strategy({ usernameField: "email" }, async (username, password, done) => {
+    try {
+      // Tries to find the user matching the given username
+      const user = await User.findOne({ email: username });
+      // Check if the password is valid
+      if (user && user.isPasswordValid(password)) {
+        return done(null, user);
+      } else {
+        // Throws an error if credentials are not valid
+        throw new Error("Invalid credentials");
+      }
+    } catch (error) {
+      return done(error);
     }
-  } catch (error) {
-    return done(error);
-  }
-}));
+  })
+);
 
 const router = Router();
 

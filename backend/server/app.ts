@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv";
-import * as express from "express";
+import express from "express";
 import * as path from "path";
 
 // Put dotenv in use before importing controllers
@@ -9,6 +9,7 @@ dotenv.config();
 import itemsController from "./items/items.controller";
 import usersController from "./users/users.controller";
 import vpnipController from "./vpnip/vpnip.controller";
+import fccController from "./fcc/fcc.controller";
 
 // Create the express application
 const app = express();
@@ -18,6 +19,7 @@ app.use("/api/items", itemsController);
 app.use("/api/users", usersController);
 app.use("/getip", vpnipController);
 app.use("/putip", vpnipController);
+app.use("/api/fcc", fccController);
 
 // Declare the path to frontend's static assets
 app.use(express.static(path.resolve("..", "frontend", "build")));

@@ -1,12 +1,11 @@
 import MongodbMemoryServer from "mongodb-memory-server";
-import * as mongoose from "mongoose";
-import * as request from "supertest";
+import mongoose from "mongoose";
+import request from "supertest";
 import app from "../app";
 import User from "../users/user.model";
 import Item from "./item.model";
 
 describe("/api/items tests", () => {
-
   const mongod = new MongodbMemoryServer();
   let token: string = "";
 
