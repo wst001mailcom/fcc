@@ -47,13 +47,13 @@ router.route("/batch").get(async (request, response) => {
     asyncForEach(urlArr, async (url: string) => {
       await waitFor(5000);
       console.log("processing url [%s]", url);
-      const filename = url.split("/").pop() || "dummy.pdf";
-      let fccresult: FCCResult = await FCCResultModel.findOne({ filename: filename });
+      const file = url.split("/").pop() || "dummy.pdf";
+      let fccresult: FCCResult = await FCCResultModel.findOne({ filename: file });
       if (!fccresult || !fccresult.product) {
         fccresult = await parser.processWeb(url);
         try {
           const fcc = new FCCResultModel(fccresult);
-          FCCResultModel.findOneAndUpdate({ filename: filename }, fcc, { upsert: true }, (err, doc) => {
+          FCCResultModel.findOneAndUpdate({ filename: file }, fcc, { upsert: true }, (err, doc) => {
             if (err) {
               console.log("Err: %S", err);
             }

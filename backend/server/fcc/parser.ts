@@ -3,7 +3,7 @@ import helper from "./helper";
 import { FCCResult } from "./index";
 import * as fs from "fs";
 import * as path from "path";
-import pdf from "pdf-parse";
+const pdf = require("pdf-parse");
 
 interface CTX {
   rows: number;
