@@ -6,9 +6,14 @@ import * as path from "path";
 import * as request from "request";
 
 export default class Helper {
-  public static fetchAndSave: (url: string, proessFn: (filepath: string, uri: string) => FCCResult) => Promise<FCCResult> = async (
+  public static fetchAndSave: (
     url: string,
-    proessFn: (filepath: string, uri: string) => FCCResult
+    fccidKey: string,
+    proessFn: (filepath: string, uri: string, fccidKey: string) => FCCResult
+  ) => Promise<FCCResult> = async (
+    url: string,
+    fccidKey: string,
+    proessFn: (filepath: string, uri: string, fccidKey: string) => FCCResult
   ) => {
     const file = url.split("/").pop() || "dummy.pdf";
     const downloadPath = path.resolve(os.tmpdir());
@@ -52,7 +57,7 @@ export default class Helper {
 
         console.log("finish writing file size in MB is ", fileSizeInMegabytes, downloadFile);
         // process the pdf file
-        const result = await proessFn(downloadFile, url);
+        const result = await proessFn(downloadFile, url, fccidKey);
         // delete the file
         fs.unlinkSync(downloadFile);
         res(result);

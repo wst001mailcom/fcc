@@ -103,7 +103,7 @@ const partialMatch = (txt: string) => {
   return { key: null, val: null };
 };
 
-const processPDFFile = (downloadFile: string, uri: string) => {
+const processPDFFile = (downloadFile: string, uri: string, fccidKey: string) => {
   console.log(downloadFile);
   const dataBuffer = fs.readFileSync(downloadFile);
   const options = {
@@ -117,6 +117,7 @@ const processPDFFile = (downloadFile: string, uri: string) => {
     const file = uri.split("/").pop() || "dummy.pdf";
 
     const fccresult: FCCResult = {
+      fccid: fccidKey,
       url: uri,
       filename: file,
       product: "",
@@ -192,14 +193,14 @@ const populateSpec = (fccresult: any, value: string, isInput: boolean) => {
   }
 };
 
-export const processWeb = async (uri: string) => {
-  return helper.fetchAndSave(uri, processPDFFile);
+export const processWeb = async (uri: string, fccidKey: string) => {
+  return helper.fetchAndSave(uri, fccidKey, processPDFFile);
 };
 
 const main = () => {
   const filename = "Test-Report-DTS-pdf-2624644.pdf";
   const downloadFile = path.resolve("./data/", filename);
-  processPDFFile(downloadFile, "http://dummy/" + filename);
+  processPDFFile(downloadFile, "http://dummy/" + filename, "Test");
 };
 
 // main();

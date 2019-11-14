@@ -13,6 +13,12 @@ router.route("/all").get(async (_, response) => {
   return response.status(200).json(fccresults);
 });
 
+router.route("/exists").get(async (request, response) => {
+  const fccid = request.query.fccid;
+  const fccresults = await FCCResultModel.findOne({ fccid: fccid });
+  return response.status(200).json(fccresults);
+});
+
 router.route("/parse").get(async (request, response) => {
   const fccinput: FCCInput = request.query.url;
   const { fccid, url } = fccinput;
@@ -21,7 +27,7 @@ router.route("/parse").get(async (request, response) => {
     const file = url.split("/").pop() || "dummy.pdf";
     let fccresult: FCCResult = await FCCResultModel.findOne({ fccid: fccid });
     if (!fccresult || !fccresult.product) {
-      fccresult = await parser.processWeb(url);
+      fccresult = await parser.processWeb(url, fccid);
       try {
         const fcc = new FCCResultModel(fccresult);
         FCCResultModel.findOneAndUpdate({ filename: file }, fcc, { upsert: true }, (err, doc) => {
@@ -52,7 +58,7 @@ router.route("/batch").get(async (request, response) => {
       const file = url.split("/").pop() || "dummy.pdf";
       let fccresult: FCCResult = await FCCResultModel.findOne({ fccid: fccid });
       if (!fccresult || !fccresult.product) {
-        fccresult = await parser.processWeb(url);
+        fccresult = await parser.processWeb(url, fccid);
         try {
           const fcc = new FCCResultModel(fccresult);
           FCCResultModel.findOneAndUpdate({ fccid: fccid }, fcc, { upsert: true }, (err, doc) => {
