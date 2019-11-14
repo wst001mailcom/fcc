@@ -45,11 +45,10 @@ router.route("/parse").get(async (request, response) => {
   }
 });
 
-router.route("/batch").get(async (request, response) => {
-  const urls = request.query.urls;
-  if (urls) {
-    console.log("url is ", urls);
-    const urlArr: string[] = JSON.parse(urls);
+router.route("/batch").post(bodyParser.json(), async (request, response) => {
+  const urlArr = request.body;
+  if (urlArr) {
+    console.log("url is ", urlArr);
 
     asyncForEach(urlArr, async (fccinput: FCCInput) => {
       const { fccid, url } = fccinput;
@@ -74,7 +73,7 @@ router.route("/batch").get(async (request, response) => {
 
     response.status(200).send("done");
   } else {
-    response.status(400).send("invalid url: " + urls);
+    response.status(400).send("invalid url: " + urlArr);
   }
 });
 
