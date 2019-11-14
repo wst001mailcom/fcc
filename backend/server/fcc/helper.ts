@@ -31,7 +31,7 @@ export default class Helper {
       // headers: request.headers,
       headers: {
         "Content-type": "applcation/pdf",
-        Referer: "https://fccid.io/PY319200447/Test-Report/DTS-Test-Report-4485630",
+        // Referer: "https://fccid.io/PY319200447/Test-Report/DTS-Test-Report-4485630",
         "Sec-Fetch-Mode": "navigate",
         "Sec-Fetch-User": "?1",
         "Upgrade-Insecure-Requests": "1",
@@ -82,7 +82,11 @@ export default class Helper {
     rp(options)
       .then((resp: any) => {
         if (resp !== null && Array.isArray(resp)) {
+          console.log("pick up proxy", resp[0]);
           return resp[0];
+        } else {
+          console.log("fallback to default");
+          return "182.16.171.1:53281";
         }
       })
       .catch((err: any) => {

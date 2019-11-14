@@ -57,8 +57,8 @@ router.route("/batch").post(bodyParser.json(), async (request, response) => {
       const file = url.split("/").pop() || "dummy.pdf";
       let fccresult: FCCResult = await FCCResultModel.findOne({ fccid: fccid });
       if (!fccresult || !fccresult.product) {
-        fccresult = await parser.processWeb(url, fccid);
         try {
+          fccresult = await parser.processWeb(url, fccid);
           const fcc = new FCCResultModel(fccresult);
           FCCResultModel.findOneAndUpdate({ fccid: fccid }, fcc, { upsert: true }, (err, doc) => {
             if (err) {
