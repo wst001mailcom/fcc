@@ -15,6 +15,11 @@ const specSchemaDef: SchemaDef<SPEC> = {
 };
 
 const fccResultSchemaDef: SchemaDef<FCCResult> = {
+  fccid: {
+    type: String,
+    unique: true,
+    required: true,
+  },
   filename: {
     type: String,
     unique: true,

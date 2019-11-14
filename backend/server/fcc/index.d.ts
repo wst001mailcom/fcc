@@ -1,4 +1,5 @@
 export interface FCCResult {
+  fccid: string;
   filename: string;
   url: string;
   product: string;
@@ -12,4 +13,9 @@ export interface FCCResult {
 export interface SPEC {
   input: string;
   output: string;
+}
+
+export interface FCCInput {
+  fccid: string;
+  url: string;
 }

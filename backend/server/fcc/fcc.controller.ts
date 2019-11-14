@@ -3,7 +3,7 @@ import express from "express";
 import { authorize } from "../config";
 import FCCResultModel from "./fcc.model";
 import * as parser from "./parser";
-import { FCCResult } from "./index";
+import { FCCResult, FCCInput } from "./index";
 
 const router = express.Router();
 const waitFor = (ms: number) => new Promise(r => setTimeout(r, ms));
@@ -14,11 +14,12 @@ router.route("/all").get(async (_, response) => {
 });
 
 router.route("/parse").get(async (request, response) => {
-  const url = request.query.url;
-  if (url) {
-    console.log("url is ", url);
+  const fccinput: FCCInput = request.query.url;
+  const { fccid, url } = fccinput;
+  if (url && fccid) {
+    console.log("url is ", fccid, url);
     const file = url.split("/").pop() || "dummy.pdf";
-    let fccresult: FCCResult = await FCCResultModel.findOne({ filename: file });
+    let fccresult: FCCResult = await FCCResultModel.findOne({ fccid: fccid });
     if (!fccresult || !fccresult.product) {
       fccresult = await parser.processWeb(url);
       try {
@@ -44,16 +45,17 @@ router.route("/batch").get(async (request, response) => {
     console.log("url is ", urls);
     const urlArr: string[] = JSON.parse(urls);
 
-    asyncForEach(urlArr, async (url: string) => {
+    asyncForEach(urlArr, async (fccinput: FCCInput) => {
+      const { fccid, url } = fccinput;
       await waitFor(5000);
       console.log("processing url [%s]", url);
       const file = url.split("/").pop() || "dummy.pdf";
-      let fccresult: FCCResult = await FCCResultModel.findOne({ filename: file });
+      let fccresult: FCCResult = await FCCResultModel.findOne({ fccid: fccid });
       if (!fccresult || !fccresult.product) {
         fccresult = await parser.processWeb(url);
         try {
           const fcc = new FCCResultModel(fccresult);
-          FCCResultModel.findOneAndUpdate({ filename: file }, fcc, { upsert: true }, (err, doc) => {
+          FCCResultModel.findOneAndUpdate({ fccid: fccid }, fcc, { upsert: true }, (err, doc) => {
             if (err) {
               console.log("Err: %S", err);
             }
