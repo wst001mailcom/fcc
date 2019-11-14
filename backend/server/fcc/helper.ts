@@ -4,6 +4,7 @@ import { FCCResult } from "./index";
 import { resolve } from "dns";
 import * as path from "path";
 import * as request from "request";
+const rp = require("request-promise");
 
 export default class Helper {
   public static fetchAndSave: (
@@ -20,6 +21,9 @@ export default class Helper {
     const downloadFile = path.resolve(downloadPath, file);
     console.log("Downloading file to:", downloadFile);
 
+    let proxyUrl = Helper.getProxy();
+    proxyUrl = proxyUrl === null ? "" : "http://" + proxyUrl;
+
     const options = {
       method: "GET",
       uri: url,
@@ -33,7 +37,7 @@ export default class Helper {
         "Upgrade-Insecure-Requests": "1",
       },
       // encoding: null,
-      proxy: "http://191.96.42.182:3121",
+      proxy: proxyUrl,
     };
 
     const writable = fs.createWriteStream(downloadFile, { flags: "w+" });
@@ -64,5 +68,27 @@ export default class Helper {
       });
       stream.on("error", rej); // or something like that. might need to close `hash`
     });
+  };
+
+  public static getProxy = (): string | null => {
+    const options = {
+      uri: "http://fcc-node-server.herokuapp.com/proxy",
+      headers: {
+        "User-Agent": "Request-Promise",
+      },
+      json: true, // Automatically parses the JSON string in the response
+    };
+
+    rp(options)
+      .then((resp: any) => {
+        if (resp !== null && Array.isArray(resp)) {
+          return resp[0];
+        }
+      })
+      .catch((err: any) => {
+        console.log("check fccid exists err");
+      });
+
+    return null;
   };
 }
