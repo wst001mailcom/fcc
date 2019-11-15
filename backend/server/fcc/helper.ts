@@ -21,7 +21,7 @@ export default class Helper {
     const downloadFile = path.resolve(downloadPath, file);
     console.log("Downloading file to:", downloadFile);
 
-    let proxyUrl = Helper.getProxy();
+    let proxyUrl = await Helper.getProxy();
     proxyUrl = proxyUrl === null ? "" : "http://" + proxyUrl;
     const referer = url.replace(/\.pdf$/, "");
 
@@ -72,7 +72,7 @@ export default class Helper {
     });
   };
 
-  public static getProxy = (): string | null => {
+  public static getProxy = async (): Promise<string | null> => {
     const options = {
       uri: "http://fcc-node-server.herokuapp.com/proxy",
       headers: {
