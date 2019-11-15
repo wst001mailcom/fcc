@@ -51,7 +51,13 @@ export default class Helper {
           console.log(response.statusCode, " Server error", options.uri);
         }
       })
-      .pipe(writable);
+      .on("error", (err: any) => {
+        console.log("err while requesting for pdf");
+      })
+      .pipe(writable)
+      .on("error", (err: any) => {
+        console.log("err while writing pdf");
+      });
 
     return new Promise<FCCResult>((res, rej) => {
       stream.on("finish", async () => {
