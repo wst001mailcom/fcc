@@ -22,7 +22,7 @@ export default class Helper {
     console.log("Downloading file to:", downloadFile);
 
     let proxyUrl = await Helper.getProxy();
-    proxyUrl = proxyUrl === null ? "" : "http://" + proxyUrl;
+    proxyUrl = proxyUrl === null ? "http://182.16.171.1:53281" : "http://" + proxyUrl;
     const referer = url.replace(/\.pdf$/, "");
 
     console.log("use proxy, refer", proxyUrl, referer);
