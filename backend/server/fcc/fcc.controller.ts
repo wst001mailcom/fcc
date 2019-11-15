@@ -4,6 +4,7 @@ import { authorize } from "../config";
 import FCCResultModel from "./fcc.model";
 import * as parser from "./parser";
 import { FCCResult, FCCInput } from "./index";
+import Helper from "./helper";
 
 const router = express.Router();
 const waitFor = (ms: number) => new Promise(r => setTimeout(r, ms));
@@ -17,6 +18,10 @@ router.route("/exists").get(async (request, response) => {
   const fccid = request.query.fccid;
   const fccresults = await FCCResultModel.findOne({ fccid: fccid });
   return response.status(200).json(fccresults);
+});
+
+router.route("/proxy").get(async (request, response) => {
+  return response.status(200).json(await Helper.getProxy());
 });
 
 router.route("/parse").get(async (request, response) => {

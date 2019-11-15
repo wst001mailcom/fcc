@@ -74,16 +74,17 @@ export default class Helper {
 
   public static getProxy = async (): Promise<string | null> => {
     const options = {
-      uri: "http://fcc-node-server.herokuapp.com/proxy",
+      uri: "https://fcc-node-server.herokuapp.com/proxy",
       headers: {
         "User-Agent": "Request-Promise",
       },
       json: true, // Automatically parses the JSON string in the response
     };
 
-    return await rp(options)
+    const url = await rp(options)
       .then((resp: any) => {
-        if (resp !== null && Array.isArray(resp)) {
+        if (resp !== null && Array.isArray(resp) && resp.length > 0) {
+          const idx = Math.floor(Math.random() * (resp.length - 1) + 0);
           console.log("pick up proxy", resp[0]);
           return resp[0];
         } else {
@@ -92,8 +93,11 @@ export default class Helper {
         }
       })
       .catch((err: any): string | null => {
-        console.log("check fccid exists err");
+        console.log("check fccid exists err", err);
         return null;
       });
+
+    console.log("url ", url);
+    return url;
   };
 }
