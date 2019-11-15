@@ -23,7 +23,9 @@ export default class Helper {
 
     let proxyUrl = Helper.getProxy();
     proxyUrl = proxyUrl === null ? "" : "http://" + proxyUrl;
+    const referer = url.replace(/\.pdf$/, "");
 
+    console.log("use proxy, refer", proxyUrl, referer);
     const options = {
       method: "GET",
       uri: url,
@@ -31,7 +33,7 @@ export default class Helper {
       // headers: request.headers,
       headers: {
         "Content-type": "applcation/pdf",
-        // Referer: "https://fccid.io/PY319200447/Test-Report/DTS-Test-Report-4485630",
+        Referer: referer,
         "Sec-Fetch-Mode": "navigate",
         "Sec-Fetch-User": "?1",
         "Upgrade-Insecure-Requests": "1",
