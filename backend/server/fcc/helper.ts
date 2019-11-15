@@ -81,7 +81,7 @@ export default class Helper {
       json: true, // Automatically parses the JSON string in the response
     };
 
-    rp(options)
+    return await rp(options)
       .then((resp: any) => {
         if (resp !== null && Array.isArray(resp)) {
           console.log("pick up proxy", resp[0]);
@@ -91,10 +91,9 @@ export default class Helper {
           return "182.16.171.1:53281";
         }
       })
-      .catch((err: any) => {
+      .catch((err: any): string | null => {
         console.log("check fccid exists err");
+        return null;
       });
-
-    return null;
   };
 }
