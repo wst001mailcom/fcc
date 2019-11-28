@@ -25,7 +25,7 @@ const staticData = {
 
 export const FccGridComp = (props: IProps) => {
   return (
-    <div style={{ height: 400, width: 1600, marginTop: 15 }} className="ag-theme-balham">
+    <div style={{ height: "80%", width: "100%", marginTop: 15 }} className="ag-theme-balham">
       <AgGridReact
         // properties
         columnDefs={staticData.columnDefs}

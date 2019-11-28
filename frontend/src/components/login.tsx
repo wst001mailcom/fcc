@@ -35,7 +35,7 @@ class UnstyledLoginForm extends React.Component<IProps & WithStyles, ILoginState
   public render = () => {
     return (
       <div className="App-login">
-        (try the credentials: testuser@email.com / my-password)
+        (try the credentials: simon / simon123)
         <input
           disabled={this.props.isRequesting}
           placeholder="email"

@@ -9,7 +9,7 @@ import Helper from "./helper";
 const router = express.Router();
 const waitFor = (ms: number) => new Promise(r => setTimeout(r, ms));
 
-router.route("/all").get(async (_, response) => {
+router.route("/all").get(authorize, async (_, response) => {
   const fccresults = await FCCResultModel.find();
   return response.status(200).json(fccresults);
 });

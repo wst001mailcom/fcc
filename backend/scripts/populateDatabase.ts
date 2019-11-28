@@ -4,13 +4,13 @@ import User from "../server/users/user.model";
 
 const populateDatabase = async () => {
   try {
-    const users = await User.find({});
+    const users = await User.find({ email: "simon" });
     const items = await Item.find({});
-    if (users.length === 0 && items.length === 0) {
+    if (users.length === 0 || items.length === 0) {
       console.log(chalk.yellow("No users or items in the database, creating sample data..."));
       const user = new User();
-      user.email = "testuser@email.com";
-      user.setPassword("my-password");
+      user.email = "simon";
+      user.setPassword("simon123");
       await user.save();
       console.log(chalk.green("Sample user successfuly created!"));
       const newItems = [
@@ -18,7 +18,7 @@ const populateDatabase = async () => {
         { name: "Colorful pen", value: 1.2 },
         { name: "Notebook", value: 2.5 },
         { name: "Soft eraser", value: 0.5 },
-        { name: "Table lamp", value: 5.1 }
+        { name: "Table lamp", value: 5.1 },
       ];
       await Item.insertMany(newItems);
       console.log(chalk.green(`${newItems.length} item(s) successfuly created!`));

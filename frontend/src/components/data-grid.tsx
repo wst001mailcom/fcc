@@ -15,14 +15,14 @@ interface Item {
 
 export const DataGridComp = (props: IProps) => {
   return (
-    <div className="App-private">
-      <FccGrid />
+    <div className="App-private" style={{ height: 600, width: "100%" }}>
       <button disabled={props.isRequesting} onClick={event => props.handleGetData()}>
-        Get test data
+        Get FCC Data
       </button>
       <button disabled={props.isRequesting} onClick={event => props.logout()}>
         Log out
       </button>
+      <FccGrid />
     </div>
   );
 };
