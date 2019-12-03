@@ -23,23 +23,36 @@ const staticData = {
   ],
 };
 
-export const FccGridComp = (props: IProps) => {
-  return (
-    <div style={{ height: "80%", width: "100%", marginTop: 15 }} className="ag-theme-balham">
-      <AgGridReact
-        // properties
-        columnDefs={staticData.columnDefs}
-        rowData={props.fccData}
-        defaultColDef={{ filter: true }}
-        // events
-        onGridReady={onGridReady}
-      />
-    </div>
-  );
-};
+export class FccGridComp extends React.Component<IProps, any> {
+  private gridApi: any;
+  // private gridColumnApi: any;
 
-const onGridReady = (params: any) => {
-  params.api.sizeColumnsToFit();
-  // this.api = params.api;
-  // this.columnApi = params.columnApi;
-};
+  constructor(props: IProps) {
+    super(props);
+  }
+
+  public render = () => {
+    return (
+      <div style={{ height: "80%", width: "100%", marginTop: 15 }} className="ag-theme-balham">
+        <button onClick={this.onBtExport}>Export to Excel</button>
+        <AgGridReact
+          // properties
+          columnDefs={staticData.columnDefs}
+          rowData={this.props.fccData}
+          defaultColDef={{ filter: true }}
+          // events
+          onGridReady={this.onGridReady}
+        />
+      </div>
+    );
+  };
+
+  private onBtExport = () => {
+    this.gridApi.exportDataAsCsv({});
+  };
+  private onGridReady = (params: any) => {
+    this.gridApi = params.api;
+    // this.gridColumnApi = params.columnApi;
+    params.api.sizeColumnsToFit();
+  };
+}
