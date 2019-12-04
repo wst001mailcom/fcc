@@ -53,6 +53,10 @@ const fccResultSchemaDef: SchemaDef<FCCResult> = {
     type: [specSchemaDef],
     required: false,
   },
+  isDummy: {
+    type: Boolean,
+    required: true,
+  },
 };
 
 // Define model schema

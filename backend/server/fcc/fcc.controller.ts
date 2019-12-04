@@ -61,7 +61,12 @@ router.route("/batch").post(bodyParser.json(), async (request, response) => {
       console.log("processing url [%s]", url);
       const file = url.split("/").pop() || "dummy.pdf";
       let fccresult: FCCResult = await FCCResultModel.findOne({ fccid: fccid });
-      if (!fccresult || !fccresult.product) {
+      if (!fccresult) {
+        fccresult = Helper.createNewFccResult(fccid, file, url, true);
+        const fcc = new FCCResultModel(fccresult);
+        fcc.save();
+      }
+      if (!fccresult || !fccresult.url) {
         try {
           fccresult = await parser.processWeb(url, fccid);
           const fcc = new FCCResultModel(fccresult);

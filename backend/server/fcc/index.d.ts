@@ -8,6 +8,7 @@ export interface FCCResult {
   modelNo: string[];
   pn: string[];
   spec: SPEC[];
+  isDummy: boolean;
 }
 
 export interface SPEC {

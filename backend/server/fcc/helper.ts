@@ -106,4 +106,19 @@ export default class Helper {
     console.log("url ", url);
     return url;
   };
+
+  public static createNewFccResult = (fccidKey: string, file: string, uri: string, isDummyVal: boolean): FCCResult => {
+    return {
+      fccid: fccidKey,
+      url: uri,
+      filename: file,
+      product: "",
+      productModelNo: [],
+      brand: "",
+      modelNo: [],
+      pn: [],
+      spec: [],
+      isDummy: isDummyVal,
+    };
+  };
 }

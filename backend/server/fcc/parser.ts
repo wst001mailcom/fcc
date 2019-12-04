@@ -116,17 +116,7 @@ const processPDFFile = (downloadFile: string, uri: string, fccidKey: string) => 
     const resultJson: [] = JSON.parse(res);
     const file = uri.split("/").pop() || "dummy.pdf";
 
-    const fccresult: FCCResult = {
-      fccid: fccidKey,
-      url: uri,
-      filename: file,
-      product: "",
-      productModelNo: [],
-      brand: "",
-      modelNo: [],
-      pn: [],
-      spec: [],
-    };
+    const fccresult: FCCResult = helper.createNewFccResult(fccidKey, file, uri, false);
 
     resultJson.forEach((e: any) => {
       const key = Object.keys(e)[0];
