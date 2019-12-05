@@ -22,7 +22,6 @@ const fccResultSchemaDef: SchemaDef<FCCResult> = {
   },
   filename: {
     type: String,
-    unique: true,
     required: true,
   },
   url: {
