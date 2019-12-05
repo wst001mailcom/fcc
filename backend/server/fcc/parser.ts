@@ -156,7 +156,7 @@ const processPDFFile = (downloadFile: string, uri: string, fccidKey: string) => 
       }
     });
 
-    // console.log(fccresult);
+    console.log("finish processing pdf ", fccidKey);
     return fccresult;
   });
 };
