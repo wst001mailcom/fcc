@@ -66,7 +66,7 @@ router.route("/batch").post(bodyParser.json(), async (request, response) => {
         const fcc = new FCCResultModel(fccresultDummy);
         fcc.save();
       }
-      if (!fccresult || !fccresult.url) {
+      if (!fccresult || fccresult.isDummy) {
         try {
           fccresult = await parser.processWeb(url, fccid);
           const fcc = new FCCResultModel(fccresult);
