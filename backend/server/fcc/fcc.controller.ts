@@ -64,7 +64,11 @@ router.route("/batch").post(bodyParser.json(), async (request, response) => {
       if (!fccresult) {
         const fccresultDummy = Helper.createNewFccResult(fccid, file, url, true);
         const fcc = new FCCResultModel(fccresultDummy);
-        fcc.save();
+        FCCResultModel.findOneAndUpdate({ fccid: fccid }, fcc, { upsert: true }, (err, doc) => {
+          if (err) {
+            console.log("Err: %S", err);
+          }
+        });
       }
       if (!fccresult || fccresult.isDummy) {
         try {
