@@ -8,6 +8,7 @@ export interface FCCResult {
   modelNo: string[];
   pn: string[];
   spec: SPEC[];
+  repDate: string;
   isDummy: boolean;
 }
 
@@ -17,6 +18,7 @@ export interface SPEC {
 }
 
 export interface FCCInput {
-  fccid: string;
-  url: string;
+  fccidVal: string | null;
+  urlVal: string | null;
+  repDateVal: string | null;
 }

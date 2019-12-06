@@ -10,11 +10,13 @@ export default class Helper {
   public static fetchAndSave: (
     url: string,
     fccidKey: string,
-    proessFn: (filepath: string, uri: string, fccidKey: string) => FCCResult
+    repDateVal: string,
+    proessFn: (filepath: string, uri: string, fccidKey: string, repDateVal: string) => FCCResult
   ) => Promise<FCCResult> = async (
     url: string,
     fccidKey: string,
-    proessFn: (filepath: string, uri: string, fccidKey: string) => FCCResult
+    repDateVal: string,
+    proessFn: (filepath: string, uri: string, fccidKey: string, repDateVal: string) => FCCResult
   ) => {
     const file = url.split("/").pop() || "dummy.pdf";
     const downloadPath = path.resolve(os.tmpdir());
@@ -69,7 +71,7 @@ export default class Helper {
 
         console.log("finish writing file size in MB is ", fileSizeInMegabytes, downloadFile);
         // process the pdf file
-        const result = await proessFn(downloadFile, url, fccidKey);
+        const result = await proessFn(downloadFile, url, fccidKey, repDateVal);
         // delete the file
         fs.unlinkSync(downloadFile);
         res(result);
@@ -107,7 +109,7 @@ export default class Helper {
     return url;
   };
 
-  public static createNewFccResult = (fccidKey: string, file: string, uri: string, isDummyVal: boolean): FCCResult => {
+  public static createNewFccResult = (fccidKey: string, file: string, uri: string, isDummyVal: boolean, repDateVal: string): FCCResult => {
     return {
       fccid: fccidKey,
       url: uri,
@@ -118,6 +120,7 @@ export default class Helper {
       modelNo: [],
       pn: [],
       spec: [],
+      repDate: repDateVal,
       isDummy: isDummyVal,
     };
   };

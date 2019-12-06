@@ -52,6 +52,10 @@ const fccResultSchemaDef: SchemaDef<FCCResult> = {
     type: [specSchemaDef],
     required: false,
   },
+  repDate: {
+    type: String,
+    required: false,
+  },
   isDummy: {
     type: Boolean,
     required: true,

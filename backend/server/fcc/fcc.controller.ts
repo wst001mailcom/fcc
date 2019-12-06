@@ -15,8 +15,8 @@ router.route("/all").get(authorize, async (_, response) => {
 });
 
 router.route("/exists").get(async (request, response) => {
-  const fccid = request.query.fccid;
-  const fccresults = await FCCResultModel.findOne({ fccid: fccid });
+  const fccidVal = request.query.fccid;
+  const fccresults = await FCCResultModel.findOne({ fccid: fccidVal });
   return response.status(200).json(fccresults);
 });
 
@@ -26,14 +26,14 @@ router.route("/proxy").get(async (request, response) => {
 
 router.route("/parse").get(async (request, response) => {
   const fccinput: FCCInput = request.query.url;
-  const { fccid, url } = fccinput;
-  if (url && fccid) {
-    console.log("url is ", fccid, url);
-    const file = url.split("/").pop() || "dummy.pdf";
-    let fccresult: FCCResult = await FCCResultModel.findOne({ fccid: fccid });
+  const { fccidVal, urlVal, repDateVal } = fccinput;
+  if (urlVal && fccidVal) {
+    console.log("url is ", fccidVal, urlVal);
+    const file = urlVal.split("/").pop() || "dummy.pdf";
+    let fccresult: FCCResult = await FCCResultModel.findOne({ fccid: fccidVal });
     if (!fccresult || !fccresult.product) {
       try {
-        fccresult = await parser.processWeb(url, fccid);
+        fccresult = await parser.processWeb(urlVal, fccidVal, repDateVal);
         const fcc = new FCCResultModel(fccresult);
         FCCResultModel.findOneAndUpdate({ filename: file }, fcc, { upsert: true }, (err, doc) => {
           if (err) {
@@ -46,7 +46,7 @@ router.route("/parse").get(async (request, response) => {
     }
     return response.status(200).json(fccresult || {});
   } else {
-    response.status(400).send("invalid url: " + url);
+    response.status(400).send("invalid url: " + urlVal);
   }
 });
 
@@ -56,15 +56,15 @@ router.route("/batch").post(bodyParser.json(), async (request, response) => {
     console.log("url is ", urlArr);
 
     asyncForEach(urlArr, async (fccinput: FCCInput) => {
-      const { fccid, url } = fccinput;
+      const { fccidVal, urlVal, repDateVal } = fccinput;
       await waitFor(5000);
-      console.log("processing url [%s]", url);
-      const file = url.split("/").pop() || "dummy.pdf";
-      let fccresult: FCCResult = await FCCResultModel.findOne({ fccid: fccid });
+      console.log("processing url [%s]", urlVal);
+      const file = urlVal.split("/").pop() || "dummy.pdf";
+      let fccresult: FCCResult = await FCCResultModel.findOne({ fccid: fccidVal });
       if (!fccresult) {
-        const fccresultDummy = Helper.createNewFccResult(fccid, file, url, true);
+        const fccresultDummy = Helper.createNewFccResult(fccidVal, file, urlVal, true, repDateVal);
         const fcc = new FCCResultModel(fccresultDummy);
-        FCCResultModel.findOneAndUpdate({ fccid: fccid }, fcc, { upsert: true }, (err, doc) => {
+        FCCResultModel.findOneAndUpdate({ fccid: fccidVal }, fcc, { upsert: true }, (err, doc) => {
           if (err) {
             console.log("Err: %S", err);
           }
@@ -72,9 +72,9 @@ router.route("/batch").post(bodyParser.json(), async (request, response) => {
       }
       if (!fccresult || fccresult.isDummy) {
         try {
-          fccresult = await parser.processWeb(url, fccid);
+          fccresult = await parser.processWeb(urlVal, fccidVal, repDateVal);
           const fcc = new FCCResultModel(fccresult);
-          FCCResultModel.findOneAndUpdate({ fccid: fccid }, fcc, { upsert: true }, (err, doc) => {
+          FCCResultModel.findOneAndUpdate({ fccid: fccidVal }, fcc, { upsert: true }, (err, doc) => {
             if (err) {
               console.log("Err: %S", err);
             }
@@ -82,6 +82,29 @@ router.route("/batch").post(bodyParser.json(), async (request, response) => {
         } catch (error) {
           console.log("Error: %S", error);
         }
+      }
+    });
+
+    response.status(200).send("done");
+  } else {
+    response.status(400).send("invalid url: " + urlArr);
+  }
+});
+
+router.route("/update").post(bodyParser.json(), async (request, response) => {
+  const urlArr = request.body;
+  if (urlArr) {
+    asyncForEach(urlArr, async (fccinput: FCCInput) => {
+      const { fccidVal, urlVal, repDateVal } = fccinput;
+      const fccresult: FCCResult = await FCCResultModel.findOne({ fccid: fccidVal });
+      if (fccresult && !fccresult.repDate) {
+        fccresult.repDate = repDateVal;
+        const fcc = new FCCResultModel(fccresult);
+        FCCResultModel.findOneAndUpdate({ fccid: fccidVal }, fcc, { upsert: true }, (err, doc) => {
+          if (err) {
+            console.log("Err: %S", err);
+          }
+        });
       }
     });
 

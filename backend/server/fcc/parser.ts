@@ -103,7 +103,7 @@ const partialMatch = (txt: string) => {
   return { key: null, val: null };
 };
 
-const processPDFFile = (downloadFile: string, uri: string, fccidKey: string) => {
+const processPDFFile = (downloadFile: string, uri: string, fccidKey: string, repDateVal: string) => {
   console.log(downloadFile);
   const dataBuffer = fs.readFileSync(downloadFile);
   const options = {
@@ -116,7 +116,7 @@ const processPDFFile = (downloadFile: string, uri: string, fccidKey: string) => 
     const resultJson: [] = JSON.parse(res);
     const file = uri.split("/").pop() || "dummy.pdf";
 
-    const fccresult: FCCResult = helper.createNewFccResult(fccidKey, file, uri, false);
+    const fccresult: FCCResult = helper.createNewFccResult(fccidKey, file, uri, false, repDateVal);
 
     resultJson.forEach((e: any) => {
       const key = Object.keys(e)[0];
@@ -183,14 +183,14 @@ const populateSpec = (fccresult: any, value: string, isInput: boolean) => {
   }
 };
 
-export const processWeb = async (uri: string, fccidKey: string) => {
-  return helper.fetchAndSave(uri, fccidKey, processPDFFile);
+export const processWeb = async (uri: string, fccidKey: string, repDateVal: string) => {
+  return helper.fetchAndSave(uri, fccidKey, repDateVal, processPDFFile);
 };
 
 const main = () => {
   const filename = "Test-Report-DTS-pdf-2624644.pdf";
   const downloadFile = path.resolve("./data/", filename);
-  processPDFFile(downloadFile, "http://dummy/" + filename, "Test");
+  processPDFFile(downloadFile, "http://dummy/" + filename, "Test", "2019-12-03");
 };
 
 // main();

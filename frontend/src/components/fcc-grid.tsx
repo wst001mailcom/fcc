@@ -11,6 +11,7 @@ interface IProps {
 const staticData = {
   columnDefs: [
     { headerName: "FCC ID", field: "fccid" },
+    { headerName: "Date", field: "repDate" },
     { headerName: "Product Model", valueGetter: (params: any) => params.data.productModelNo.join(", ") },
     { headerName: "Model", valueGetter: (params: any) => params.data.modelNo.join(", ") },
     { headerName: "P/N", valueGetter: (params: any) => params.data.pn.join(", ") },
@@ -18,6 +19,7 @@ const staticData = {
     { headerName: "Brand", field: "brand" },
     { headerName: "Product", field: "product" },
     { headerName: "Spec", valueGetter: (params: any) => params.data.spec.map((x: any) => x.input + x.output).join(", ") },
+    { headerName: "Dummy", field: "isDummy" },
     { headerName: "Url", field: "url" },
     // { headerName: , field: },
   ],
