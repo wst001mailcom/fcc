@@ -93,8 +93,8 @@ export default class Helper {
       .then((resp: any) => {
         if (resp !== null && Array.isArray(resp) && resp.length > 0) {
           const idx = Math.floor(Math.random() * (resp.length - 1) + 0);
-          console.log("pick up proxy", resp[0]);
-          return resp[0];
+          console.log("pick up proxy", resp[idx]);
+          return resp[idx];
         } else {
           console.log("fallback to default");
           return "182.16.171.1:53281";
