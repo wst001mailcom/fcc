@@ -16,18 +16,18 @@ const dateComparator = (d1: string, d2: string) => {
 
 const staticData = {
   columnDefs: [
-    { headerName: "FCC ID PREFIX", field: "fccidPrefix", sortable: true, rowGroup: true },
-    { headerName: "FCC ID", field: "fccid", sortable: true },
-    { headerName: "Date", field: "repDate", sortable: true, sort: "asc", comparator: dateComparator },
-    { headerName: "Product Model", valueGetter: (params: any) => params.data.productModelNo.join(", "), sortable: true },
-    { headerName: "Model", valueGetter: (params: any) => params.data.modelNo.join(", "), sortable: true },
-    { headerName: "P/N", valueGetter: (params: any) => params.data.pn.join(", "), sortable: true },
-    { headerName: "File name", field: "filename", sortable: true },
-    { headerName: "Brand", field: "brand", sortable: true },
-    { headerName: "Product", field: "product", sortable: true },
-    { headerName: "Spec", valueGetter: (params: any) => params.data.spec.map((x: any) => x.input + x.output).join(", "), sortable: true },
-    { headerName: "Dummy", field: "isDummy", sortable: true },
-    { headerName: "Url", field: "url", sortable: true },
+    { headerName: "FCC ID PREFIX", field: "fccidPrefix", rowGroup: true, enableRowGroup: true },
+    { headerName: "FCC ID", field: "fccid" },
+    { headerName: "Date", field: "repDate", sort: "asc", comparator: dateComparator },
+    { headerName: "Product Model", valueGetter: (params: any) => params.data.productModelNo.join(", ") },
+    { headerName: "Model", valueGetter: (params: any) => params.data.modelNo.join(", ") },
+    { headerName: "P/N", valueGetter: (params: any) => params.data.pn.join(", ") },
+    { headerName: "File name", field: "filename" },
+    { headerName: "Brand", field: "brand" },
+    { headerName: "Product", field: "product" },
+    { headerName: "Spec", valueGetter: (params: any) => params.data.spec.map((x: any) => x.input + x.output).join(", ") },
+    { headerName: "Dummy", field: "isDummy" },
+    { headerName: "Url", field: "url" },
     // { headerName: , field: },
   ],
 };
@@ -43,12 +43,15 @@ export class FccGridComp extends React.Component<IProps, any> {
   public render = () => {
     return (
       <div style={{ height: "80%", width: "100%", marginTop: 15 }} className="ag-theme-balham">
+        <input type="text" placeholder="Filter...." onInput={this.onFilterTextBoxChanged} />
         <button onClick={this.onBtExport}>Export to Excel</button>
         <AgGridReact
           // properties
           columnDefs={staticData.columnDefs}
           rowData={this.props.fccData}
-          defaultColDef={{ filter: true }}
+          defaultColDef={{ filter: true, sortable: true, resizable: true }}
+          // copy
+          enableCellTextSelection={true}
           // events
           onGridReady={this.onGridReady}
         />
@@ -59,6 +62,11 @@ export class FccGridComp extends React.Component<IProps, any> {
   private onBtExport = () => {
     this.gridApi.exportDataAsCsv({});
   };
+
+  private onFilterTextBoxChanged = (evt: any) => {
+    this.gridApi.setQuickFilter(evt.target.value);
+  };
+
   private onGridReady = (params: any) => {
     this.gridApi = params.api;
     // this.gridColumnApi = params.columnApi;
