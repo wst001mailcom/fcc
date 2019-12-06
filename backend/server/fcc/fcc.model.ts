@@ -15,6 +15,10 @@ const specSchemaDef: SchemaDef<SPEC> = {
 };
 
 const fccResultSchemaDef: SchemaDef<FCCResult> = {
+  fccidPrefix: {
+    type: String,
+    required: true,
+  },
   fccid: {
     type: String,
     unique: true,

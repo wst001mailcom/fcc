@@ -1,5 +1,5 @@
 export interface FCCResult {
-  fccidPrfix: string;
+  fccidPrefix: string;
   fccid: string;
   filename: string;
   url: string;

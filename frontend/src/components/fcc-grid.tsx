@@ -8,11 +8,17 @@ interface IProps {
   fccData: any[];
 }
 
+const dateComparator = (d1: string, d2: string) => {
+  const date1: number = Date.parse(d1);
+  const date2: number = Date.parse(d2);
+  return date1 - date2;
+};
+
 const staticData = {
   columnDefs: [
     { headerName: "FCC ID PREFIX", field: "fccidPrefix", sortable: true, rowGroup: true },
     { headerName: "FCC ID", field: "fccid", sortable: true },
-    { headerName: "Date", field: "repDate", sortable: true, sort: "asc" },
+    { headerName: "Date", field: "repDate", sortable: true, sort: "asc", comparator: dateComparator },
     { headerName: "Product Model", valueGetter: (params: any) => params.data.productModelNo.join(", "), sortable: true },
     { headerName: "Model", valueGetter: (params: any) => params.data.modelNo.join(", "), sortable: true },
     { headerName: "P/N", valueGetter: (params: any) => params.data.pn.join(", "), sortable: true },
