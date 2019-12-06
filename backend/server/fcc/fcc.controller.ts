@@ -106,6 +106,15 @@ router.route("/update").post(bodyParser.json(), async (request, response) => {
             console.log("Err: %S", err);
           }
         });
+      } else if (fccresult && !fccresult.fccidPrfix) {
+        console.log("update fccid prefix", fccidVal);
+        fccresult.fccidPrfix = fccidVal.substring(0, 3);
+        const fcc = new FCCResultModel(fccresult);
+        FCCResultModel.findOneAndUpdate({ fccid: fccidVal }, fcc, { upsert: true }, (err, doc) => {
+          if (err) {
+            console.log("Err: %S", err);
+          }
+        });
       }
     });
 

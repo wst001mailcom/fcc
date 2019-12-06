@@ -111,6 +111,7 @@ export default class Helper {
 
   public static createNewFccResult = (fccidKey: string, file: string, uri: string, isDummyVal: boolean, repDateVal: string): FCCResult => {
     return {
+      fccidPrfix: fccidKey.substring(0, 3),
       fccid: fccidKey,
       url: uri,
       filename: file,
