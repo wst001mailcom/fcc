@@ -12,7 +12,7 @@ const staticData = {
   columnDefs: [
     { headerName: "FCC ID PREFIX", field: "fccidPrefix", sortable: true, rowGroup: true },
     { headerName: "FCC ID", field: "fccid", sortable: true },
-    { headerName: "Date", field: "repDate", sortable: true },
+    { headerName: "Date", field: "repDate", sortable: true, sort: "asc" },
     { headerName: "Product Model", valueGetter: (params: any) => params.data.productModelNo.join(", "), sortable: true },
     { headerName: "Model", valueGetter: (params: any) => params.data.modelNo.join(", "), sortable: true },
     { headerName: "P/N", valueGetter: (params: any) => params.data.pn.join(", "), sortable: true },
