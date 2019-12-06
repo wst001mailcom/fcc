@@ -98,6 +98,7 @@ router.route("/update").post(bodyParser.json(), async (request, response) => {
       const { fccidVal, urlVal, repDateVal } = fccinput;
       const fccresult: FCCResult = await FCCResultModel.findOne({ fccid: fccidVal });
       if (fccresult && !fccresult.repDate) {
+        console.log("update fccid ", fccidVal, repDateVal);
         fccresult.repDate = repDateVal;
         const fcc = new FCCResultModel(fccresult);
         FCCResultModel.findOneAndUpdate({ fccid: fccidVal }, fcc, { upsert: true }, (err, doc) => {
