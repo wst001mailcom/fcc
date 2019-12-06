@@ -55,9 +55,10 @@ router.route("/batch").post(bodyParser.json(), async (request, response) => {
   if (urlArr) {
     console.log("url is ", urlArr);
 
-    asyncForEach(urlArr, async (fccinput: FCCInput) => {
+    response.status(202).send("processing");
+
+    urlArr.forEach(async (fccinput: FCCInput) => {
       const { fccidVal, urlVal, repDateVal } = fccinput;
-      await waitFor(5000);
       console.log("processing url [%s]", urlVal);
       const file = urlVal.split("/").pop() || "dummy.pdf";
       let fccresult: FCCResult = await FCCResultModel.findOne({ fccid: fccidVal });
@@ -84,8 +85,6 @@ router.route("/batch").post(bodyParser.json(), async (request, response) => {
         }
       }
     });
-
-    response.status(200).send("done");
   } else {
     response.status(400).send("invalid url: " + urlArr);
   }
