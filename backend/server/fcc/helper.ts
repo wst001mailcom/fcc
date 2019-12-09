@@ -21,7 +21,7 @@ export default class Helper {
       if (n === 1) {
         return null;
       }
-      await Helper.waitFor(1000);
+      await Helper.waitFor(5000);
       return Helper.fetchRetry(url, fccidKey, repDateVal, proessFn, n - 1);
     });
   };
@@ -89,6 +89,7 @@ export default class Helper {
       })
       .on("error", (err: any) => {
         console.log("err while requesting for pdf");
+        Helper.proxies = Helper.proxies.filter(x => x !== proxyUrl);
       })
       .pipe(writable)
       .on("error", (err: any) => {
