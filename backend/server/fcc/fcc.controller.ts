@@ -96,7 +96,7 @@ router.route("/update").post(bodyParser.json(), async (request, response) => {
   if (urlArr) {
     asyncForEach(
       urlArr,
-      async (fccinput: FCCInput) => {
+      async (fccinput: FCCInput, index: number) => {
         const { fccidVal, urlVal, repDateVal } = fccinput;
         const fccresult: FCCResult = await FCCResultModel.findOne({ fccid: fccidVal });
         if (fccresult && !fccresult.repDate) {
@@ -128,10 +128,10 @@ router.route("/update").post(bodyParser.json(), async (request, response) => {
   }
 });
 
-const asyncForEach = async (array: string[], callback: any, callbackPostLoop: any) => {
-  for (let index = 0; index < array.length; index++) {
-    console.log("processing value ", array[index]);
-    await callback(array[index], index, array);
+const asyncForEach = async (urls: FCCInput[], callback: (input: FCCInput, idx: number) => void, callbackPostLoop: any) => {
+  for (let index = 0; index < urls.length; index++) {
+    console.log("processing value ", urls[index]);
+    await callback(urls[index], index);
   }
   callbackPostLoop();
 };
