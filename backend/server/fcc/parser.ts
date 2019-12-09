@@ -184,7 +184,7 @@ const populateSpec = (fccresult: any, value: string, isInput: boolean) => {
 };
 
 export const processWeb = async (uri: string, fccidKey: string, repDateVal: string) => {
-  return helper.fetchAndSave(uri, fccidKey, repDateVal, processPDFFile);
+  helper.fetchRetry(uri, fccidKey, repDateVal, processPDFFile, 5);
 };
 
 const main = () => {

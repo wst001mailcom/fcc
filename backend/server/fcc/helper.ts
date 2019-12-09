@@ -7,12 +7,44 @@ import * as request from "request";
 const rp = require("request-promise");
 
 export default class Helper {
-  public static fetchAndSave: (
+  public static waitFor = (ms: number) => new Promise(r => setTimeout(r, ms));
+
+  public static fetchRetry = (
     url: string,
     fccidKey: string,
     repDateVal: string,
-    proessFn: (filepath: string, uri: string, fccidKey: string, repDateVal: string) => FCCResult
-  ) => Promise<FCCResult> = async (
+    proessFn: (filepath: string, uri: string, fccidKey: string, repDateVal: string) => FCCResult,
+    n: number
+  ): Promise<FCCResult> => {
+    return Helper.fetchAndSave(url, fccidKey, repDateVal, proessFn).catch(async error => {
+      if (n === 1) {
+        return null;
+      }
+      await Helper.waitFor(1000);
+      return Helper.fetchRetry(url, fccidKey, repDateVal, proessFn, n - 1);
+    });
+  };
+
+  public static createNewFccResult = (fccidKey: string, file: string, uri: string, isDummyVal: boolean, repDateVal: string): FCCResult => {
+    return {
+      fccidPrefix: fccidKey.substring(0, 3),
+      fccid: fccidKey,
+      url: uri,
+      filename: file,
+      product: "",
+      productModelNo: [],
+      brand: "",
+      modelNo: [],
+      pn: [],
+      spec: [],
+      repDate: repDateVal,
+      isDummy: isDummyVal,
+    };
+  };
+
+  private static proxies: string[] = [];
+
+  private static fetchAndSave = async (
     url: string,
     fccidKey: string,
     repDateVal: string,
@@ -24,6 +56,7 @@ export default class Helper {
     console.log("Downloading file to:", downloadFile);
 
     let proxyUrl = await Helper.getProxy();
+
     proxyUrl = proxyUrl === null ? "http://182.16.171.1:53281" : "http://" + proxyUrl;
     const referer = url.replace(/\.pdf$/, "");
 
@@ -55,10 +88,12 @@ export default class Helper {
       })
       .on("error", (err: any) => {
         console.log("err while requesting for pdf");
+        throw err;
       })
       .pipe(writable)
       .on("error", (err: any) => {
         console.log("err while writing pdf");
+        throw err;
       });
 
     return new Promise<FCCResult>((res, rej) => {
@@ -80,49 +115,44 @@ export default class Helper {
     });
   };
 
-  public static getProxy = async (): Promise<string | null> => {
-    const options = {
-      uri: "https://fcc-node-server.herokuapp.com/proxy",
-      headers: {
-        "User-Agent": "Request-Promise",
-      },
-      json: true, // Automatically parses the JSON string in the response
-    };
-
-    const url = await rp(options)
-      .then((resp: any) => {
-        if (resp !== null && Array.isArray(resp) && resp.length > 0) {
-          const idx = Math.floor(Math.random() * (resp.length - 1) + 0);
-          console.log("pick up proxy", resp[idx]);
-          return resp[idx];
-        } else {
-          console.log("fallback to default");
-          return "182.16.171.1:53281";
-        }
-      })
-      .catch((err: any): string | null => {
-        console.log("check fccid exists err", err);
+  private static getProxyRetry = async (n: number): Promise<string | null> => {
+    return Helper.getProxy().catch(async error => {
+      if (n === 1) {
         return null;
-      });
-
-    console.log("url ", url);
-    return url;
+      }
+      await Helper.waitFor(1000);
+      return Helper.getProxyRetry(n - 1);
+    });
   };
 
-  public static createNewFccResult = (fccidKey: string, file: string, uri: string, isDummyVal: boolean, repDateVal: string): FCCResult => {
-    return {
-      fccidPrefix: fccidKey.substring(0, 3),
-      fccid: fccidKey,
-      url: uri,
-      filename: file,
-      product: "",
-      productModelNo: [],
-      brand: "",
-      modelNo: [],
-      pn: [],
-      spec: [],
-      repDate: repDateVal,
-      isDummy: isDummyVal,
-    };
+  private static getProxy = async (): Promise<string | null> => {
+    if (!Helper.proxies || Helper.proxies.length <= 0) {
+      const options = {
+        uri: "https://fcc-node-server.herokuapp.com/proxy",
+        headers: {
+          "User-Agent": "Request-Promise",
+        },
+        json: true, // Automatically parses the JSON string in the response
+      };
+
+      await rp(options)
+        .then((resp: any) => {
+          if (resp !== null && Array.isArray(resp) && resp.length > 0) {
+            Helper.proxies = [...resp];
+          }
+        })
+        .catch((err: any): string | null => {
+          console.log("check fccid exists err", err);
+          return null;
+        });
+    }
+
+    if (Helper.proxies.length > 0) {
+      const idx = Math.floor(Math.random() * (Helper.proxies.length - 1) + 0);
+      console.log("pick up proxy", Helper.proxies[idx]);
+      return Helper.proxies[idx];
+    } else {
+      throw new Error("no proxy found");
+    }
   };
 }

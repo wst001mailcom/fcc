@@ -7,7 +7,6 @@ import { FCCResult, FCCInput } from "./index";
 import Helper from "./helper";
 
 const router = express.Router();
-const waitFor = (ms: number) => new Promise(r => setTimeout(r, ms));
 
 router.route("/all").get(authorize, async (_, response) => {
   const fccresults = await FCCResultModel.find();
@@ -18,10 +17,6 @@ router.route("/exists").get(async (request, response) => {
   const fccidVal = request.query.fccid;
   const fccresults = await FCCResultModel.findOne({ fccid: fccidVal });
   return response.status(200).json(fccresults);
-});
-
-router.route("/proxy").get(async (request, response) => {
-  return response.status(200).json(await Helper.getProxy());
 });
 
 router.route("/parse").get(async (request, response) => {
@@ -55,36 +50,42 @@ router.route("/batch").post(bodyParser.json(), async (request, response) => {
   if (urlArr) {
     console.log("url is ", urlArr);
 
-    response.status(202).send("processing");
-
-    asyncForEach(urlArr, async (fccinput: FCCInput, index: number) => {
-      const { fccidVal, urlVal, repDateVal } = fccinput;
-      // await waitFor(index * 2000);
-      const file = urlVal.split("/").pop() || "dummy.pdf";
-      let fccresult: FCCResult = await FCCResultModel.findOne({ fccid: fccidVal });
-      if (!fccresult) {
-        const fccresultDummy = Helper.createNewFccResult(fccidVal, file, urlVal, true, repDateVal);
-        const fcc = new FCCResultModel(fccresultDummy);
-        FCCResultModel.findOneAndUpdate({ fccid: fccidVal }, fcc, { upsert: true }, (err, doc) => {
-          if (err) {
-            console.log("Err: %S", err);
-          }
-        });
-      }
-      if (!fccresult || fccresult.isDummy) {
-        try {
-          fccresult = await parser.processWeb(urlVal, fccidVal, repDateVal);
-          const fcc = new FCCResultModel(fccresult);
+    asyncForEach(
+      urlArr,
+      async (fccinput: FCCInput, index: number) => {
+        const { fccidVal, urlVal, repDateVal } = fccinput;
+        // await waitFor(index * 2000);
+        const file = urlVal.split("/").pop() || "dummy.pdf";
+        let fccresult: FCCResult = await FCCResultModel.findOne({ fccid: fccidVal });
+        if (!fccresult) {
+          const fccresultDummy = Helper.createNewFccResult(fccidVal, file, urlVal, true, repDateVal);
+          const fcc = new FCCResultModel(fccresultDummy);
           FCCResultModel.findOneAndUpdate({ fccid: fccidVal }, fcc, { upsert: true }, (err, doc) => {
             if (err) {
               console.log("Err: %S", err);
             }
           });
-        } catch (error) {
-          console.log("Error: %S", error);
         }
+        if (!fccresult || fccresult.isDummy) {
+          try {
+            fccresult = await parser.processWeb(urlVal, fccidVal, repDateVal);
+            if (fccresult) {
+              const fcc = new FCCResultModel(fccresult);
+              FCCResultModel.findOneAndUpdate({ fccid: fccidVal }, fcc, { upsert: true }, (err, doc) => {
+                if (err) {
+                  console.log("Err: %S", err);
+                }
+              });
+            }
+          } catch (error) {
+            console.log("Error: %S", error);
+          }
+        }
+      },
+      () => {
+        response.status(200).send("Done processing batch");
       }
-    });
+    );
   } else {
     response.status(400).send("invalid url: " + urlArr);
   }
@@ -93,41 +94,46 @@ router.route("/batch").post(bodyParser.json(), async (request, response) => {
 router.route("/update").post(bodyParser.json(), async (request, response) => {
   const urlArr = request.body;
   if (urlArr) {
-    asyncForEach(urlArr, async (fccinput: FCCInput) => {
-      const { fccidVal, urlVal, repDateVal } = fccinput;
-      const fccresult: FCCResult = await FCCResultModel.findOne({ fccid: fccidVal });
-      if (fccresult && !fccresult.repDate) {
-        console.log("update fccid ", fccidVal, repDateVal);
-        fccresult.repDate = repDateVal;
-        const fcc = new FCCResultModel(fccresult);
-        FCCResultModel.findOneAndUpdate({ fccid: fccidVal }, fcc, { upsert: true }, (err, doc) => {
-          if (err) {
-            console.log("Err: %S", err);
-          }
-        });
-      } else if (fccresult && !fccresult.fccidPrefix) {
-        console.log("update fccid prefix", fccidVal);
-        fccresult.fccidPrefix = fccidVal.substring(0, 3);
-        const fcc = new FCCResultModel(fccresult);
-        FCCResultModel.findOneAndUpdate({ fccid: fccidVal }, fcc, { upsert: true }, (err, doc) => {
-          if (err) {
-            console.log("Err: %S", err);
-          }
-        });
+    asyncForEach(
+      urlArr,
+      async (fccinput: FCCInput) => {
+        const { fccidVal, urlVal, repDateVal } = fccinput;
+        const fccresult: FCCResult = await FCCResultModel.findOne({ fccid: fccidVal });
+        if (fccresult && !fccresult.repDate) {
+          console.log("update fccid ", fccidVal, repDateVal);
+          fccresult.repDate = repDateVal;
+          const fcc = new FCCResultModel(fccresult);
+          FCCResultModel.findOneAndUpdate({ fccid: fccidVal }, fcc, { upsert: true }, (err, doc) => {
+            if (err) {
+              console.log("Err: %S", err);
+            }
+          });
+        } else if (fccresult && !fccresult.fccidPrefix) {
+          console.log("update fccid prefix", fccidVal);
+          fccresult.fccidPrefix = fccidVal.substring(0, 3);
+          const fcc = new FCCResultModel(fccresult);
+          FCCResultModel.findOneAndUpdate({ fccid: fccidVal }, fcc, { upsert: true }, (err, doc) => {
+            if (err) {
+              console.log("Err: %S", err);
+            }
+          });
+        }
+      },
+      () => {
+        response.status(200).send("Done");
       }
-    });
-
-    response.status(200).send("done");
+    );
   } else {
     response.status(400).send("invalid url: " + urlArr);
   }
 });
 
-const asyncForEach = async (array: string[], callback: any) => {
+const asyncForEach = async (array: string[], callback: any, callbackPostLoop: any) => {
   for (let index = 0; index < array.length; index++) {
     console.log("processing value ", array[index]);
     await callback(array[index], index, array);
   }
+  callbackPostLoop();
 };
 
 export default router;
