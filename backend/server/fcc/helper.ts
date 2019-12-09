@@ -17,6 +17,7 @@ export default class Helper {
     n: number
   ): Promise<FCCResult> => {
     return Helper.fetchAndSave(url, fccidKey, repDateVal, proessFn).catch(async error => {
+      console.log("got error from fetch and save, retrying....", n, fccidKey);
       if (n === 1) {
         return null;
       }
@@ -88,12 +89,10 @@ export default class Helper {
       })
       .on("error", (err: any) => {
         console.log("err while requesting for pdf");
-        throw err;
       })
       .pipe(writable)
       .on("error", (err: any) => {
         console.log("err while writing pdf");
-        throw err;
       });
 
     return new Promise<FCCResult>((res, rej) => {
