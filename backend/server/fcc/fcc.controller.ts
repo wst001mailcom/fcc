@@ -86,6 +86,7 @@ router.route("/batch").post(bodyParser.json(), async (request, response) => {
         response.status(200).send("Done processing batch");
       }
     );
+    response.status(202).send("Processing batch");
   } else {
     response.status(400).send("invalid url: " + urlArr);
   }
@@ -130,8 +131,12 @@ router.route("/update").post(bodyParser.json(), async (request, response) => {
 
 const asyncForEach = async (urls: FCCInput[], callback: (input: FCCInput, idx: number) => void, callbackPostLoop: any) => {
   for (let index = 0; index < urls.length; index++) {
-    console.log("processing value ", urls[index]);
-    await callback(urls[index], index);
+    try {
+      console.log("processing value ", urls[index]);
+      await callback(urls[index], index);
+    } catch (err) {
+      console.log("error in loop");
+    }
   }
   callbackPostLoop();
 };
