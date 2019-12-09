@@ -9,14 +9,18 @@ const rp = require("request-promise");
 export default class Helper {
   public static waitFor = (ms: number) => new Promise(r => setTimeout(r, ms));
 
-  public static fetchRetry = (
+  public static fetchRetry = async (
     url: string,
     fccidKey: string,
     repDateVal: string,
     proessFn: (filepath: string, uri: string, fccidKey: string, repDateVal: string) => FCCResult,
     n: number
   ): Promise<FCCResult> => {
-    return Helper.fetchAndSave(url, fccidKey, repDateVal, proessFn).catch(async error => {
+    let proxyUrl = await Helper.getProxy();
+
+    proxyUrl = proxyUrl === null ? "http://182.16.171.1:53281" : n === 2 ? "http://182.16.171.1:53281" : "https://" + proxyUrl;
+
+    return Helper.fetchAndSave(url, fccidKey, repDateVal, proessFn, proxyUrl).catch(async error => {
       console.log("got error from fetch and save, retrying....", n, fccidKey);
       if (n === 1) {
         return null;
@@ -49,16 +53,14 @@ export default class Helper {
     url: string,
     fccidKey: string,
     repDateVal: string,
-    proessFn: (filepath: string, uri: string, fccidKey: string, repDateVal: string) => FCCResult
+    proessFn: (filepath: string, uri: string, fccidKey: string, repDateVal: string) => FCCResult,
+    proxyUrl: string
   ) => {
     const file = url.split("/").pop() || "dummy.pdf";
     const downloadPath = path.resolve(os.tmpdir());
     const downloadFile = path.resolve(downloadPath, file);
     console.log("Downloading file to:", downloadFile);
 
-    let proxyUrl = await Helper.getProxy();
-
-    proxyUrl = proxyUrl === null ? "http://182.16.171.1:53281" : "http://" + proxyUrl;
     const referer = url.replace(/\.pdf$/, "");
 
     console.log("use proxy, refer", proxyUrl, referer);
@@ -68,11 +70,14 @@ export default class Helper {
       // body: request.postData,
       // headers: request.headers,
       headers: {
+        ":authority": "fccid.io",
+        ":method": "GET",
         "Content-type": "applcation/pdf",
         Referer: referer,
         "Sec-Fetch-Mode": "navigate",
         "Sec-Fetch-User": "?1",
         "Upgrade-Insecure-Requests": "1",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
       },
       // encoding: null,
       proxy: proxyUrl,
