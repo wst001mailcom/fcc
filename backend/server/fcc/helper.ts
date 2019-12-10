@@ -112,6 +112,7 @@ export default class Helper {
           Helper.proxies = Helper.proxies.filter(x => x !== proxyUrl);
           if (Helper.goodProxies.includes(proxyUrl)) {
             Helper.goodProxies = Helper.goodProxies.filter(x => x !== proxyUrl);
+            console.log("delete proxy from db", proxyUrl);
             Proxy.deleteOne({ url: proxyUrl });
           }
           rej(err);
@@ -126,6 +127,7 @@ export default class Helper {
         if (!Helper.goodProxies.includes(proxyUrl)) {
           const proxy = new Proxy();
           proxy.url = proxyUrl;
+          console.log("saving proxy to db", proxyUrl);
           await proxy.save();
         }
         Helper.goodProxies = [...new Set(Helper.goodProxies), proxyUrl];
