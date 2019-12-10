@@ -5,6 +5,7 @@ import { resolve } from "dns";
 import * as path from "path";
 import * as request from "request";
 import Proxy from "./proxy.model";
+import mongoose from "mongoose";
 
 const rp = require("request-promise");
 
@@ -125,7 +126,7 @@ export default class Helper {
         if (!Helper.goodProxies.includes(proxyUrl)) {
           const proxy = new Proxy();
           proxy.url = proxyUrl;
-          proxy.save();
+          await proxy.save();
         }
         Helper.goodProxies = [...new Set(Helper.goodProxies), proxyUrl];
         Helper.proxies = Helper.proxies.filter(x => x !== proxyUrl);
