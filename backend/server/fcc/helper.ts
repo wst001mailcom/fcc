@@ -95,7 +95,7 @@ export default class Helper {
           }
         })
         .on("error", (err: any) => {
-          console.log("err while requesting for pdf");
+          console.log("err while requesting for pdf", err);
           Helper.proxies = Helper.proxies.filter(x => x !== proxyUrl);
           rej(err);
         })
