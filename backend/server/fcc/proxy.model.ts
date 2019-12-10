@@ -14,14 +14,6 @@ const proxySchemaDef: SchemaDef<Proxy> = {
 };
 
 // Define model schema
-const proxySchema = new Schema(proxySchemaDef, {
-  _id: false,
-  toJSON: {
-    transform: (doc, ret) => {
-      delete ret._id;
-      delete ret.__v;
-    },
-  },
-});
+const proxySchema = new Schema(proxySchemaDef);
 
 export default model<ProxyDoc>("Proxy", proxySchema);
