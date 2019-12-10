@@ -4,6 +4,8 @@ import { FCCResult } from "./index";
 import { resolve } from "dns";
 import * as path from "path";
 import * as request from "request";
+import Proxy from "./proxy.model";
+
 const rp = require("request-promise");
 
 export default class Helper {
@@ -18,9 +20,12 @@ export default class Helper {
   ): Promise<FCCResult> => {
     let proxyUrl = await Helper.getProxy();
 
+    if (Helper.goodProxies.length <= 0) {
+      Helper.goodProxies = (await Proxy.find()).map(x => x.url);
+    }
     if (n > 0 && n <= 3 && Helper.goodProxies.length > 0) {
       const idx = Math.floor(Math.random() * (Helper.goodProxies.length - 1) + 0);
-      console.log("pick up proxy", Helper.goodProxies[idx]);
+      console.log("pick up proxy from good list", Helper.goodProxies[idx]);
       proxyUrl = Helper.goodProxies[idx];
     }
 
@@ -104,6 +109,10 @@ export default class Helper {
         .on("error", (err: any) => {
           console.log("err while requesting for pdf", err);
           Helper.proxies = Helper.proxies.filter(x => x !== proxyUrl);
+          if (Helper.goodProxies.includes(proxyUrl)) {
+            Helper.goodProxies = Helper.goodProxies.filter(x => x !== proxyUrl);
+            Proxy.deleteOne({ url: proxyUrl });
+          }
           rej(err);
         })
         .pipe(writable)
@@ -113,6 +122,11 @@ export default class Helper {
         });
 
       stream.on("finish", async () => {
+        if (!Helper.goodProxies.includes(proxyUrl)) {
+          const proxy = new Proxy();
+          proxy.url = proxyUrl;
+          proxy.save();
+        }
         Helper.goodProxies = [...new Set(Helper.goodProxies), proxyUrl];
         Helper.proxies = Helper.proxies.filter(x => x !== proxyUrl);
         writable.end();

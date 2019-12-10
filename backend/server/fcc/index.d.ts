@@ -23,3 +23,7 @@ export interface FCCInput {
   urlVal: string | null;
   repDateVal: string | null;
 }
+
+export interface Proxy {
+  url: string;
+}
