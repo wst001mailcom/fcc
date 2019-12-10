@@ -25,7 +25,7 @@ const staticData = {
     { headerName: "Brand", field: "brand" },
     { headerName: "Product Model", valueGetter: (params: any) => params.data.productModelNo.join(", ") },
     { headerName: "Product", field: "product" },
-    { headerName: "Dummy", field: "isDummy" },
+    { headerName: "Dummy", valueGetter: (params: any) => (params.data.isDummy ? true : "") },
     { headerName: "File name", field: "filename" },
     { headerName: "Url", field: "url" },
     // { headerName: , field: },
