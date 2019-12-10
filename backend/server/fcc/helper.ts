@@ -71,8 +71,8 @@ export default class Helper {
         // body: request.postData,
         // headers: request.headers,
         headers: {
-          ":authority": "fccid.io",
-          ":method": "GET",
+          // ":authority": "fccid.io",
+          // ":method": "GET",
           "Content-type": "applcation/pdf",
           Referer: referer,
           "Sec-Fetch-Mode": "navigate",
