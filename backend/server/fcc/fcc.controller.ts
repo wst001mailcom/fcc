@@ -41,7 +41,7 @@ router.route("/parse").get(async (request, response) => {
     }
     return response.status(200).json(fccresult || {});
   } else {
-    response.status(400).send("invalid url: " + urlVal);
+    return response.status(400).send("invalid url: " + urlVal);
   }
 });
 
@@ -77,18 +77,18 @@ router.route("/batch").post(bodyParser.json(), async (request, response) => {
                 }
               });
             }
-          } catch (error) {
-            console.log("Error: %S", error);
+          } catch (err) {
+            console.log("Error: %S", err);
           }
         }
       },
       () => {
-        response.status(200).send("Done processing batch");
+        console.log("finish batch ", urlArr);
       }
     );
-    response.status(202).send("Processing batch");
+    return response.status(202).send("Processing batch");
   } else {
-    response.status(400).send("invalid url: " + urlArr);
+    return response.status(400).send("invalid url: " + urlArr);
   }
 });
 
@@ -121,11 +121,11 @@ router.route("/update").post(bodyParser.json(), async (request, response) => {
         }
       },
       () => {
-        response.status(200).send("Done");
+        return response.status(200).send("Done");
       }
     );
   } else {
-    response.status(400).send("invalid url: " + urlArr);
+    return response.status(400).send("invalid url: " + urlArr);
   }
 });
 
