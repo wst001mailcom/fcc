@@ -18,7 +18,7 @@ export default class Helper {
   ): Promise<FCCResult> => {
     let proxyUrl = await Helper.getProxy();
 
-    proxyUrl = proxyUrl === null ? "http://182.16.171.1:53281" : n === 2 ? "http://182.16.171.1:53281" : "https://" + proxyUrl;
+    proxyUrl = proxyUrl === null ? "http://182.16.171.1:53281" : n === 2 ? "http://182.16.171.1:53281" : "http://" + proxyUrl;
 
     return Helper.fetchAndSave(url, fccidKey, repDateVal, proessFn, proxyUrl).catch(async error => {
       console.log("got error from fetch and save, retrying....", n, fccidKey);
