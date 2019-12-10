@@ -18,7 +18,13 @@ export default class Helper {
   ): Promise<FCCResult> => {
     let proxyUrl = await Helper.getProxy();
 
-    proxyUrl = proxyUrl === null ? "http://182.16.171.1:53281" : n === 2 ? "http://182.16.171.1:53281" : "http://" + proxyUrl;
+    if (n > 0 && n <= 3 && Helper.goodProxies.length > 0) {
+      const idx = Math.floor(Math.random() * (Helper.goodProxies.length - 1) + 0);
+      console.log("pick up proxy", Helper.goodProxies[idx]);
+      proxyUrl = Helper.goodProxies[idx];
+    }
+
+    proxyUrl = proxyUrl === null ? "http://182.16.171.1:53281" : "http://" + proxyUrl;
 
     return Helper.fetchAndSave(url, fccidKey, repDateVal, proessFn, proxyUrl).catch(async error => {
       console.log("got error from fetch and save, retrying....", n, fccidKey);
@@ -48,6 +54,7 @@ export default class Helper {
   };
 
   private static proxies: string[] = [];
+  private static goodProxies: string[] = [];
 
   private static fetchAndSave = (
     url: string,
@@ -106,6 +113,7 @@ export default class Helper {
         });
 
       stream.on("finish", async () => {
+        Helper.goodProxies = [...new Set(Helper.goodProxies), proxyUrl];
         writable.end();
         const stats = fs.statSync(downloadFile);
         const fileSizeInBytes = stats.size;
