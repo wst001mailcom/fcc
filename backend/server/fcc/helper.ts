@@ -19,7 +19,7 @@ export default class Helper {
     proessFn: (filepath: string, uri: string, fccidKey: string, repDateVal: string) => FCCResult,
     n: number
   ): Promise<FCCResult> => {
-    let proxyUrl = await Helper.getProxy();
+    let proxyUrl = await Helper.getProxyRetry(5);
 
     if (Helper.goodProxies.length <= 0) {
       Helper.goodProxies = (await Proxy.find()).map(x => x.url);
@@ -30,7 +30,7 @@ export default class Helper {
       proxyUrl = Helper.goodProxies[idx];
     }
 
-    proxyUrl = proxyUrl === null ? "http://182.16.171.1:53281" : "http://" + proxyUrl;
+    proxyUrl = proxyUrl === null ? "http://182.16.171.1:53281" : proxyUrl;
 
     return Helper.fetchAndSave(url, fccidKey, repDateVal, proessFn, proxyUrl).catch(async error => {
       console.log("got error from fetch and save, retrying....", n, fccidKey);
@@ -177,7 +177,7 @@ export default class Helper {
         rp(options)
           .then((resp: any) => {
             if (resp !== null && Array.isArray(resp) && resp.length > 0) {
-              Helper.proxies = [...resp];
+              Helper.proxies = resp.map(x => "http://" + x);
               const idx = Math.floor(Math.random() * (Helper.proxies.length - 1) + 0);
               console.log("pick up proxy", Helper.proxies[idx]);
               res(Helper.proxies[idx]);
