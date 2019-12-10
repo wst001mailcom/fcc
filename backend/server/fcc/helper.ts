@@ -114,6 +114,7 @@ export default class Helper {
 
       stream.on("finish", async () => {
         Helper.goodProxies = [...new Set(Helper.goodProxies), proxyUrl];
+        Helper.proxies = Helper.proxies.filter(x => x !== proxyUrl);
         writable.end();
         const stats = fs.statSync(downloadFile);
         const fileSizeInBytes = stats.size;
