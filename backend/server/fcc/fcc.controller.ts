@@ -56,7 +56,7 @@ router.route("/batch").post(bodyParser.json(), async (request, response) => {
         const { fccidVal, urlVal, repDateVal } = fccinput;
         // await waitFor(index * 2000);
         const file = urlVal.split("/").pop() || "dummy.pdf";
-        let fccresult: FCCResult = await FCCResultModel.findOne({ fccid: fccidVal });
+        const fccresult: FCCResult = await FCCResultModel.findOne({ fccid: fccidVal });
         if (!fccresult) {
           const fccresultDummy = Helper.createNewFccResult(fccidVal, file, urlVal, true, repDateVal);
           const fcc = new FCCResultModel(fccresultDummy);
@@ -66,11 +66,11 @@ router.route("/batch").post(bodyParser.json(), async (request, response) => {
             }
           });
         }
-        if (!fccresult || fccresult.isDummy) {
+        if (!fccresult || fccresult.isDummy || !fccresult.spec || fccresult.spec.length === 0) {
           try {
-            fccresult = await parser.processWeb(urlVal, fccidVal, repDateVal);
+            const newFccresult = await parser.processWeb(urlVal, fccidVal, repDateVal);
             if (fccresult) {
-              const fcc = new FCCResultModel(fccresult);
+              const fcc = new FCCResultModel(newFccresult);
               FCCResultModel.findOneAndUpdate({ fccid: fccidVal }, fcc, { upsert: true }, (err, doc) => {
                 if (err) {
                   console.log("Err: %S", err);
