@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 import populateDatabase from "../scripts/populateDatabase";
 import app from "./app";
 
-const url = process.env.MONGODB_URI || "mongodb://localhost:27017/test_database";
-const port = process.env.PORT || 9000;
+const url = process.env.MONGODB_URI || "mongodb://localhost:27017/fcc_database";
+const port = process.env.PORT || 8081;
 
 (async () => {
   // Connect to the database
