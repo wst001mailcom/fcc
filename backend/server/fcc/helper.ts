@@ -7,6 +7,7 @@ import * as request from "request";
 import Proxy from "./proxy.model";
 import mongoose from "mongoose";
 
+// tslint:disable-next-line:no-var-requires
 const rp = require("request-promise");
 
 export default class Helper {

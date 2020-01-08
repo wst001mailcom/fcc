@@ -1,4 +1,5 @@
 import puppeteer, { Browser } from "puppeteer";
+// tslint:disable-next-line:no-var-requires
 const randomUA = require("modern-random-ua");
 
 const pausedRequests: any[] = [];
