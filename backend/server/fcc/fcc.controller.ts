@@ -5,9 +5,29 @@ import FCCResultModel from "./fcc.model";
 import * as parser from "./parser";
 import { FCCResult, FCCInput } from "./index";
 import Helper from "./helper";
+import FetchFCC from "../fccscrapper/index";
 
 const router = express.Router();
 
+const fetchFCC = new FetchFCC();
+
+router.route("/parse").get(async (request: any, response: any) => {
+  const productMasterId = request.query.pmid;
+  if (productMasterId) {
+    fetchFCC
+      .fetchTables(productMasterId, false)
+      .then(result => {
+        console.log("result is ", result);
+      })
+      .catch((err: any) => {
+        response.send("problem " + err);
+      });
+
+    response.send("done");
+  } else {
+    response.send("invalid product master id: " + productMasterId);
+  }
+});
 router.route("/all").get(authorize, async (_, response) => {
   const fccresults = await FCCResultModel.find();
   return response.status(200).json(fccresults);
@@ -19,7 +39,7 @@ router.route("/exists").get(async (request, response) => {
   return response.status(200).json(fccresults);
 });
 
-router.route("/parse").get(async (request, response) => {
+router.route("/parsePDF").get(async (request, response) => {
   const fccinput: FCCInput = request.query.url;
   const { fccidVal, urlVal, repDateVal } = fccinput;
   if (urlVal && fccidVal) {

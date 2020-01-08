@@ -31,10 +31,12 @@
     "express-jwt": "^5.3.1",
     "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.13",
+    "modern-random-ua": "^1.0.3",
     "mongoose": "^5.2.4",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "pdf-parse": "^1.1.1",
+    "puppeteer": "^1.20.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.5",
     "webpack": "^3.9.1"
@@ -55,6 +57,7 @@
     "@types/passport-local": "^1.0.33",
     "@types/request": "^2.48.3",
     "@types/supertest": "^2.0.2",
+    "@types/puppeteer": "^1.12.3",
     "chalk": "^2.4.1",
     "jest": "^24.8.0",
     "mongodb-memory-server": "^2.1.0",
@@ -65,6 +68,7 @@
     "ts-node": "^3.2.0",
     "tslint": "^5.11.0",
     "typescript": "^3.1.6",
+    "expect-puppeteer": "^4.3.0",
     "webpack": "^3.9.1"
   },
   "scripts": {
